@@ -41,3 +41,38 @@ describe("/api/topics", () => {
         })
     })
 })
+
+describe("/api/articles/:article_id", () => {
+    it("GET - 200, returns the correct article as directed to by the parametric endpoint", () => {
+        return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.article).toMatchObject({
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 100,
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+        })
+    })
+    it("GET - 404, responds with an error for an article_id that is valid but that does not exist on our database", () => {
+        return request(app)
+        .get("/api/articles/99999")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
+        })
+    })
+    it("GET - 400, responds with an error for an invalid article_id type", () => {
+        return request(app)
+        .get("/api/articles/not-a-number")
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+})
