@@ -1,4 +1,3 @@
-const { request, response } = require("express");
 const { fetchTopics } = require("../models/topics.model");
 
 exports.getTopics = (request, response) => {
