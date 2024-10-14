@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/api", (request, response, next) => {
-    response.status(200).send({ endpoints: endpoints })
+    response.status(200).send({ endpoints })
 })
 
 app.get("/api/topics", getTopics);
