@@ -25,6 +25,7 @@ describe("/api/topics", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
+            expect(body.topics.length).not.toBe(0)
             body.topics.forEach(topic => {
                 expect(typeof topic.slug).toBe("string")
                 expect(typeof topic.description).toBe("string")
@@ -35,8 +36,8 @@ describe("/api/topics", () => {
         return request(app)
         .get("/api/toopicss")
         .expect(404)
-        .then((response) => {
-            expect(response.body.msg).toBe("Not Found")
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
         })
     })
 })

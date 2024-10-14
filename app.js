@@ -1,7 +1,9 @@
 const express = require("express");
 const { getTopics } = require("./controllers/topics.controller");   
-const { errorHandler } = require("./error-handlers");
+const { error500 } = require("./error-handlers");
+
 const endpoints = require("./endpoints.json")
+
 const app = express();
 
 app.use(express.json());
@@ -17,5 +19,5 @@ app.all('*', (request, response, next) => {
     next(err);
 })
 
-app.use(errorHandler);
+app.use(error500);
 module.exports = app;
