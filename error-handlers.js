@@ -1,6 +1,5 @@
 exports.error404 = (err, request, response, next) => {
     if (err.status === 404 && err.msg) {
-        console.log(err.msg)
         response.status(404).send({ msg: err.msg })
     }
     next(err)

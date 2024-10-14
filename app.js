@@ -1,9 +1,8 @@
 const express = require("express");
 const { getTopics } = require("./controllers/topics.controller");   
 const { error500, error404, error400 } = require("./error-handlers");
-
+const { getArticleById, getArticles } = require("./controllers/articles.controller");
 const endpoints = require("./endpoints.json");
-const { getArticleById } = require("./controllers/articles.controller");
 
 const app = express();
 
@@ -14,6 +13,8 @@ app.get("/api", (request, response, next) => {
 })
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles", getArticles)
 
 app.get("/api/articles/:article_id", getArticleById);
 
