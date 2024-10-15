@@ -42,6 +42,43 @@ describe("/api/topics", () => {
     })
 })
 
+describe("/api/articles", () => {
+    it("GET - 200, returns an array of objects with their properties", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).not.toBe(0)
+            body.articles.forEach(article => {
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(typeof article.topic).toBe("string")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.article_img_url).toBe("string")
+                expect(typeof article.comment_count).toBe("number")
+            })
+        })
+    })
+    it("GET - 200, return an array of articles sorted by created_at in descending order", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles).toBeSortedBy("created_at", { descending: true })
+        })
+    })
+    it("GET - 404, responds with an error when given an invalid endpoint", () => {
+        return request(app)
+        .get("/api/arctucles")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
+        })
+    })
+})
+
 describe("/api/articles/:article_id", () => {
     it("GET - 200, returns the correct article as directed to by the parametric endpoint", () => {
         return request(app)
