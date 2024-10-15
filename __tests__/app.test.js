@@ -32,14 +32,6 @@ describe("/api/topics", () => {
             })
         })
     })
-    it("GET - 404, responds with an error when given an invalid endpoint", () => {
-        return request(app)
-        .get("/api/toopicss")
-        .expect(404)
-        .then(({ body }) => {
-            expect(body.msg).toBe("Not Found")
-        })
-    })
 })
 
 describe("/api/articles", () => {
@@ -67,14 +59,6 @@ describe("/api/articles", () => {
         .expect(200)
         .then(({ body }) => {
             expect(body.articles).toBeSortedBy("created_at", { descending: true })
-        })
-    })
-    it("GET - 404, responds with an error when given an invalid endpoint", () => {
-        return request(app)
-        .get("/api/arctucles")
-        .expect(404)
-        .then(({ body }) => {
-            expect(body.msg).toBe("Not Found")
         })
     })
 })
@@ -110,6 +94,85 @@ describe("/api/articles/:article_id", () => {
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+})
+
+describe("/api/articles/:article_id/comments", () => {
+    it("GET - 200, returns an array of all the comments associated with a valid article_id", () => {
+        return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.length).not.toBe(0)
+            body.comments.forEach(comment => {
+                expect(comment).toHaveProperty("comment_id")
+                expect(comment).toHaveProperty("votes")
+                expect(comment).toHaveProperty("created_at")
+                expect(comment).toHaveProperty("author")
+                expect(comment).toHaveProperty("body")
+                expect(comment).toHaveProperty("article_id")
+            })
+        })
+    })
+    it("GET - 200, returns an array of comments with properties of the expected types from a valid article_id", () => {
+        return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.length).not.toBe(0)
+            body.comments.forEach(comment => {
+                expect(typeof comment.comment_id).toBe("number")
+                expect(typeof comment.votes).toBe("number")
+                expect(typeof comment.created_at).toBe("string")
+                expect(typeof comment.author).toBe("string")
+                expect(typeof comment.body).toBe("string")
+                expect(typeof comment.article_id).toBe("number")
+            })
+        })
+    })
+    it("GET - 200, returns an array of comments order by most recent first", () => {
+        return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.comments).toBeSortedBy("created_at")
+        })
+    })
+    it("GET - 200, returns an empty array when given a valid article_id with no associated comments", () => {
+        return request(app)
+        .get("/api/articles/7/comments")
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body.comments)).toBe(true)
+            expect(body.comments).toHaveLength(0)
+        })
+    })
+    it("GET - 404, responds with an error when given article_id type that is valid but does not exist on the database", ()  => {
+        return request(app)
+        .get("/api/articles/99999/comments")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
+        })
+    })
+    it("GET - 400, responds with an error when given an invalid article_id", () => {
+        return request(app)
+        .get("/api/articles/not-a-number/comments")
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+})
+
+describe("All bad URLs", () => {
+    it("GET - 404, responds with an error when given an invalid endpoint", () => {
+        return request(app)
+        .get("/api/inVAlIDenDpoint")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
         })
     })
 })
