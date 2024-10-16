@@ -61,6 +61,98 @@ describe("GET /api/articles", () => {
             expect(body.articles).toBeSortedBy("created_at", { descending: true })
         })
     })
+    describe("Status 200 - Sorting queries - GET /api/articles", () => {
+        it("GET - 200, responds with an array of articles sorted by the default 'created_at' but queried in ascending order", () => {
+            return request(app)
+            .get("/api/articles?order_by=ASC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("created_at")
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'title' in descending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=title&order_by=DESC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("title", { descending: true})
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'title' in ascending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=title&order_by=ASC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("title")
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'topic' in descending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=topic&order_by=DESC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("topic", { descending: true})
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'topic'in ascending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=topic&order_by=ASC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("topic")
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'author' in descending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=author&order_by=DESC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("author", { descending: true})
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'author' and in ascending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=author&order_by=ASC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("author")
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'votes' in descending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=votes&order_by=DESC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("votes", { descending: true})
+            })
+        })
+        it("GET - 200, responds with an array of articles sorted by 'votes' and in ascending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=votes&order_by=ASC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("votes")
+            })
+        })
+    })
+    describe("Error - Sorting queries - GET /api/articles", () => {
+        it("GET - 400, responds with an error when invalid sort_by is queried and not greenlisted", () => {
+            return request(app)
+            .get("/api/articles?sort_by=books")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request")
+            })
+        })
+        it("GET - 400, responds with an error when invalid order_by is queried", () => {
+            return request(app)
+            .get("/api/articles?sort_by=title?order_by=horizontal")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request")
+            })
+        })
+    })
 })
 
 describe("GET /api/users", () => {
