@@ -1,5 +1,5 @@
 const { fetchArticleById } = require("../models/articles.model")
-const { fetchCommentsByArticleId, createCommentsByArticleId } = require("../models/comments.model")
+const { fetchCommentsByArticleId, createCommentsByArticleId, removeCommentByCommentId } = require("../models/comments.model")
 
 exports.getCommentsByArticleId = (request, response, next) => {
     const { article_id } = request.params
@@ -28,6 +28,18 @@ exports.postCommentsByArticleId = (request, response, next) => {
     Promise.all(promises)
     .then((newComment) => {
         response.status(201).send({ comment: newComment[1] })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.deleteCommentByCommentId = (request, response, next) => {
+    const { comment_id } = request.params;
+
+    removeCommentByCommentId(comment_id)
+    .then(() => {
+        response.status(204).send()
     })
     .catch((err) => {
         next(err)

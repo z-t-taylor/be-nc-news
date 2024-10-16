@@ -340,6 +340,30 @@ describe("PATCH /api/articles/:article_id", () => {
     })
 })
 
+describe("DELETE /api/comments/:comment_id", () => {
+    it("DELETE - 204, responds by deleting a comment corresponding by a comment_id", () => {
+        return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+    })
+    it("DELETE - 404, responds with an error when a queried comment_id is a valid data type but does not exist on the database", () => {
+        return request(app)
+        .delete("/api/comments/4444")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
+        })
+    })
+    it("DELETE - 400, responds with an error when a queried comment_id is an invalid data type", () => {
+        return request(app)
+        .delete("/api/comments/noTtHEriGhtDaTA")
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+})
+
 describe("All bad URLs", () => {
     it("GET - 404, responds with an error when given an invalid endpoint", () => {
         return request(app)
