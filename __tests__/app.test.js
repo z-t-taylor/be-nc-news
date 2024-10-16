@@ -258,6 +258,88 @@ describe("POST /api/articles/:article_id/comments", () => {
     })
 })
 
+describe("PATCH /api/articles/:article_id", () => {
+    it("PATCH - 200, responds with request article with an increase in votes on an article",() => {
+        const upDateVotes = {
+            inc_votes: 1
+        }
+        return request(app)
+        .patch("/api/articles/1")
+        .send(upDateVotes)
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.votes).toBe(101)
+            expect(body).toHaveProperty("title")
+            expect(body).toHaveProperty("topic")
+            expect(body).toHaveProperty("author")
+            expect(body).toHaveProperty("body")
+            expect(body).toHaveProperty("created_at")
+            expect(body).toHaveProperty("votes")
+            expect(body).toHaveProperty("article_img_url")
+        })
+    })
+    it("PATCH - 200, responds with an decrease in votes on an article",() => {
+        const upDateVotes = {
+            inc_votes: -99
+        }
+        return request(app)
+        .patch("/api/articles/1")
+        .send(upDateVotes)
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.votes).toBe(1)
+        })
+    })
+    it("PATCH - 200, responds with an article that exists on the database, originally with the votes at 0, remaining at 0 when new votes are a negative integer", () => {
+        const upDateVotes = {
+            inc_votes: -2
+        }
+        return request(app)
+        .patch("/api/articles/7")
+        .send(upDateVotes)
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.votes).toBe(0)
+        })
+    })  
+    it("PATCH - 404, responds with an error when given an valid article_id but does not exist on the database", () => {
+        const upDateVotes = {
+            inc_votes: 10
+        }
+        return request(app)
+        .patch("/api/articles/9999")
+        .send(upDateVotes)
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
+        })
+    })
+    it("PATCH - 400, responds with an error when given an invalid article_id", () => {
+        const upDateVotes = {
+            inc_votes: 10
+        }
+        return request(app)
+        .patch("/api/articles/not-an-endpoint")
+        .send(upDateVotes)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+    it("PATCH - 400, responds with an error when given an invalid data type passed to inc_votes", () => {
+        const upDateVotes = {
+            inc_votes: true
+        }
+        return request(app)
+        .patch("/api/articles/2")
+        .send(upDateVotes)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+})
+
 describe("All bad URLs", () => {
     it("GET - 404, responds with an error when given an invalid endpoint", () => {
         return request(app)
