@@ -19,7 +19,7 @@ describe("/api", () => {
     })
 })
 
-describe("/api/topics", () => {
+describe("GET /api/topics", () => {
     it("GET - 200, returns an array of all topics", () => {
         return request(app)
         .get("/api/topics")
@@ -34,7 +34,7 @@ describe("/api/topics", () => {
     })
 })
 
-describe("/api/articles", () => {
+describe("GET /api/articles", () => {
     it("GET - 200, returns an array of objects with their properties", () => {
         return request(app)
         .get("/api/articles")
@@ -63,7 +63,7 @@ describe("/api/articles", () => {
     })
 })
 
-describe("/api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
     it("GET - 200, returns the correct article as directed to by the parametric endpoint", () => {
         return request(app)
         .get("/api/articles/1")
@@ -98,7 +98,7 @@ describe("/api/articles/:article_id", () => {
     })
 })
 
-describe("/api/articles/:article_id/comments", () => {
+describe("GET /api/articles/:article_id/comments", () => {
     it("GET - 200, returns an array of all the comments associated with a valid article_id", () => {
         return request(app)
         .get("/api/articles/3/comments")
@@ -131,7 +131,7 @@ describe("/api/articles/:article_id/comments", () => {
             })
         })
     })
-    it("GET - 200, returns an array of comments order by most recent first", () => {
+    it("GET - 200, returns an array of comments ordered by most recent first", () => {
         return request(app)
         .get("/api/articles/3/comments")
         .expect(200)
@@ -162,6 +162,98 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+})
+
+describe("POST /api/articles/:article_id/comments", () => {
+    it("POST - 201, accepts a request and returns a newly posted comment associated with article_id with the correct properties plus an extra property added by user", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "This bread needs no spread.",
+            extraProp: true
+        }
+        return request(app)
+        .post("/api/articles/9/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body: {comment}}) => {
+            expect(comment).toHaveProperty("comment_id")
+            expect(comment).toHaveProperty("votes", 0)
+            expect(comment).toHaveProperty("created_at")
+            expect(comment).toHaveProperty("author", newComment.username)
+            expect(comment).toHaveProperty("body", newComment.body)
+            expect(comment).toHaveProperty("article_id", 9)
+        })
+    })
+    it("POST - 201, accepts a request and returns with a new comment which has the correct property types",() => {
+        const newComment = {
+            username: "lurker",
+            body: "Nothing to add."
+        }
+        return request(app)
+        .post("/api/articles/9/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body: {comment}}) => {
+            expect(typeof comment.comment_id).toBe("number")
+            expect(typeof comment.votes).toBe("number")
+            expect(typeof comment.created_at).toBe("string")
+            expect(typeof comment.author).toBe("string")
+            expect(typeof comment.body).toBe("string")
+            expect(typeof comment.article_id).toBe("number")
+        })
+    })
+    it("POST - 404, responds with an error when an invalid article_id that is not present on the database is given", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "This consists of letters."
+        }
+        return request(app)
+        .post("/api/articles/99999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
+        })
+    })
+    it("POST - 400, responds with an error when given an invalid article_id", () => {
+        const newComment = {
+            username: "lurker",
+            body: "I see everything.."
+        }
+        return request(app)
+        .post("/api/articles/not-a-number/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+    it("POST - 404, responds with an error when an invalid username is used that does not exist on the database", () => {
+        const newComment = {
+            username: "total-biscuit",
+            body: "Nothing worse than a soggy biscuit that drops into a freshly brewed cuppa"
+        }
+        return request(app)
+        .post("/api/articles/7/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Not Found")
+        })
+    })
+    it("POST - 400, responds with an error when missing a required field", () => {
+        const newComment = {
+            username: "lurker",
+            body: ""
+        }
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Bad Request")
         })
     })
 })
