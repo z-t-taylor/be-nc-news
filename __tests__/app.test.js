@@ -63,6 +63,23 @@ describe("GET /api/articles", () => {
     })
 })
 
+describe("GET /api/users", () => {
+    it("GET - 200, returns an array of all the users", () => {
+        return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body.users)).toBe(true)
+            expect(body.users.length).not.toBe(0)
+            body.users.forEach(user => {
+                expect(user).toHaveProperty("username")
+                expect(user).toHaveProperty("name")
+                expect(user).toHaveProperty("avatar_url")
+            })
+        })
+    })
+})
+
 describe("GET /api/articles/:article_id", () => {
     it("GET - 200, returns the correct article as directed to by the parametric endpoint", () => {
         return request(app)
