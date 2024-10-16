@@ -26,6 +26,18 @@
       ]
     }
   },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": ["users"],
+    "exampleResponse": {
+      "topics": [
+        { 
+          "username": "marsha_marsha_marsha", 
+          "name": "jan",
+          "avatar_url": "https://avatarsrus.com/a-cat-in-teapot"
+        }]
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "serves an object of the key-value pairs from a selected article",
     "queries": ["title", "topic", "author", "body", "created_at", "votes", "article_img_url"],
