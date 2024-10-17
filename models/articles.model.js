@@ -37,14 +37,24 @@ exports.fetchArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
 
 exports.fetchArticleById = (article_id) => {
     return db.query(`
-        SELECT title, topic, author, body, created_at, votes, article_img_url FROM articles
-        WHERE article_id = $1`, [article_id])
-        .then(({ rows }) => {
-            if (rows.length === 0){
-                return Promise.reject({ status: 404, msg: "Not Found" });
-            }
-            return rows[0]
+        SELECT articles.title, articles.topic, articles.author, articles.body, articles.created_at, articles.votes, articles.article_img_url, articles.article_id,
+        COUNT(comments.article_id) AS comment_count 
+        FROM articles
+        JOIN comments
+        ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id;`, [article_id])
+    .then(({ rows }) => {
+        if (rows.length === 0){
+            return Promise.reject({ status: 404, msg: "Not Found" });
+        }
+
+        rows.forEach(row => {
+            row.comment_count = parseInt(row.comment_count, 10);
         })
+
+        return rows[0]
+    })
 }
 
 exports.updateVotesByArticleId = (article_id, upDateVotes) => {
