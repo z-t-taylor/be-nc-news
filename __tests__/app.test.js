@@ -146,10 +146,26 @@ describe("GET /api/articles", () => {
         })
         it("GET - 400, responds with an error when invalid order_by is queried", () => {
             return request(app)
-            .get("/api/articles?sort_by=title?order_by=horizontal")
+            .get("/api/articles?sort_by=title&order_by=horizontal")
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("Bad Request")
+            })
+        })
+        it("GET - 200, responds with an array of articles with the default sorting ('created_at') when 'sort_by' is misspelt in the query", () => {
+            return request(app)
+            .get("/api/articles?sNortby=author&order_by=ASC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("created_at")
+            })
+        })
+        it("GET - 200, responds with an array of articles in the default order ('DESC') when 'order_by' is misspelt in the query", () => {
+            return request(app)
+            .get("/api/articles?sort_by=topic&otterby=ASC")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("topic", { descending: true })
             })
         })
     })

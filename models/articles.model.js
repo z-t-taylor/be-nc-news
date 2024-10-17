@@ -3,9 +3,10 @@ const db = require("../db/connection");
 exports.fetchArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
 
     const validSortQueries = [ "created_at", "title", "topic", "author", "votes" ];
+    const validOrderQueries = [ "DESC", "ASC" ]
 
-    if(!validSortQueries.includes(sort_by) || order_by !== "DESC" && order_by !== "ASC"){
-        return Promise.reject({ status: 400, msg: "Bad Request"});
+    if(!validSortQueries.includes(sort_by) || !validOrderQueries.includes(order_by)){
+        return Promise.reject({ status: 400, msg: "Bad Request" });
     }
 
     let filteredTopic = [];
