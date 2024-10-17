@@ -1,3 +1,6 @@
+const { getTopics } = require("../../controllers/topics.controller");
+const { fetchTopics } = require("../../models/topics.model");
+
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
   return { created_at: new Date(created_at), ...otherProperties };
@@ -20,3 +23,16 @@ exports.formatComments = (comments, idLookup) => {
     };
   });
 };
+
+exports.checkIfTopicExists = (topic) => {
+  return fetchTopics()
+  .then((listedTopics) => {
+    const slugs = listedTopics.map(topic =>
+      topic.slug)
+
+    if(!slugs.includes(topic)){
+      return Promise.reject({ status: 404, msg: "Topic Not Found" })
+    }
+    return topic
+  })
+}

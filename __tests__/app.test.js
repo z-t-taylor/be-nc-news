@@ -153,6 +153,36 @@ describe("GET /api/articles", () => {
             })
         })
     })
+    describe("Status 200 - Topic filter - GET /api/articles", () => {
+        it("GET - 200, takes a topic query and responds with a filtered array of topics based on then given input", () => {
+            return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles.length).not.toBe(0)
+                body.articles.forEach(article => {
+                    expect(article.topic).toBe("mitch")
+                })
+            })
+        })
+        it("GET - 200, responds with an empty array when a queried topic does exist on the database but there are no articles currently assigned to it", () => {
+            return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then(({ body }) => {
+                expect(Array.isArray(body.topic)).toBe(true)
+                expect(body.topic).toHaveLength(0)
+            })
+        })
+        it("GET - 404, responds with an error when topic does not exist on the database", () =>  {
+            return request(app)
+            .get("/api/articles?topic=sandcastles")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Topic Not Found")
+            })
+        })
+    })
 })
 
 describe("GET /api/users", () => {
