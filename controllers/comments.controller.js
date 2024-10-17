@@ -6,10 +6,6 @@ exports.getCommentsByArticleId = (request, response, next) => {
 
     const promises = [fetchCommentsByArticleId(article_id)]
 
-    if (article_id) {
-        promises.push(fetchArticleById(article_id))
-    }
-
     Promise.all(promises)
     .then((results) => {
         response.status(200).send({ comments: results[0] })

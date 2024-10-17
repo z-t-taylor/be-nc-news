@@ -232,6 +232,7 @@ describe("GET /api/articles/:article_id", () => {
                 created_at: "2020-07-09T20:11:00.000Z",
                 votes: 100,
                 article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                comment_count: 11
             })
         })
     })
@@ -249,6 +250,17 @@ describe("GET /api/articles/:article_id", () => {
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("Invalid Data Type")
+        })
+    })
+    describe("Comment count - GET /api/articles/:article_id", () => {
+        it("GET- 200, responds with an article with 'comment_count' property added", () => {
+            return request(app)
+            .get("/api/articles/3")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article).toHaveProperty("comment_count")
+                expect(typeof body.article.comment_count).toBe("number")
+            })
         })
     })
 })
