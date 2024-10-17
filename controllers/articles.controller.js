@@ -1,9 +1,22 @@
+const { checkIfTopicExists } = require("../db/seeds/utils");
 const { fetchArticleById, fetchArticles, updateVotesByArticleId } = require("../models/articles.model")
 
 exports.getArticles = (request, response, next) => {
-    const { sort_by, order_by } = request.query;
-    fetchArticles(sort_by, order_by)
-    .then((articles) => {
+    const { topic, sort_by, order_by } = request.query;
+
+    const promises = [fetchArticles(topic, sort_by, order_by)]
+
+    if(topic){
+        promises.push(checkIfTopicExists(topic))
+    }
+
+    Promise.all(promises)
+    .then((result) => {
+        const articles = result[0]
+        
+        if(articles.length === 0){
+            response.status(200).send({ topic: articles })
+        }
         response.status(200).send({ articles })
     })
     .catch((err) => {
