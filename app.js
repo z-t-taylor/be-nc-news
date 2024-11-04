@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require("express");
 const { error500, error400, customError, error404 } = require("./error-handlers");
 const { getTopics } = require("./controllers/topics.controller");   
@@ -7,6 +8,8 @@ const { getUsers } = require("./controllers/users.controller");
 const endpoints = require("./endpoints.json");
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 

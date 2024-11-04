@@ -12,7 +12,7 @@ exports.fetchArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
     let filteredTopic = [];
     let topicQuery = `
         SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
-        COUNT(comments.article_id) AS comment_count 
+        COUNT(comments.article_id)::INT AS comment_count 
         FROM articles
         LEFT JOIN comments 
         ON comments.article_id = articles.article_id`
@@ -28,9 +28,6 @@ exports.fetchArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
 
     return db.query(topicQuery, filteredTopic)
 .then(({ rows }) => {
-    rows.forEach(row => {
-        row.comment_count = parseInt(row.comment_count, 10);
-    })
     return rows
     })
 }
@@ -38,7 +35,7 @@ exports.fetchArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
 exports.fetchArticleById = (article_id) => {
     return db.query(`
         SELECT articles.title, articles.topic, articles.author, articles.body, articles.created_at, articles.votes, articles.article_img_url, articles.article_id,
-        COUNT(comments.article_id) AS comment_count 
+        COUNT(comments.article_id)::INT AS comment_count 
         FROM articles
         JOIN comments
         ON articles.article_id = comments.article_id
@@ -48,11 +45,6 @@ exports.fetchArticleById = (article_id) => {
         if (rows.length === 0){
             return Promise.reject({ status: 404, msg: "Not Found" });
         }
-
-        rows.forEach(row => {
-            row.comment_count = parseInt(row.comment_count, 10);
-        })
-
         return rows[0]
     })
 }
