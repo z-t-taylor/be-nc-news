@@ -2,7 +2,7 @@ const db = require("../db/connection");
 
 exports.fetchArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
 
-    const validSortQueries = [ "created_at", "title", "topic", "author", "votes" ];
+    const validSortQueries = [ "created_at", "title", "topic", "author", "votes", "comment_count" ];
     const validOrderQueries = [ "DESC", "ASC" ]
 
     if(!validSortQueries.includes(sort_by) || !validOrderQueries.includes(order_by)){
