@@ -53,7 +53,7 @@ exports.updateVotesByCommentId = (comment_id, inc_votes) => {
   return db
     .query(
       `
-    SELECT votes FROM comments
+    SELECT comment_id, votes FROM comments
     WHERE comment_id = $1`,
       [comment_id]
     )
