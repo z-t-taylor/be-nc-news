@@ -67,7 +67,7 @@ exports.updateVotesByCommentId = (comment_id, inc_votes) => {
       return db.query(
         `
               UPDATE comments
-              SET votes = GREATEST($2, 0)
+              SET votes = $2
               WHERE comment_id = $1
               RETURNING comment_id, author, body, article_id, created_at, votes;`,
         [comment_id, updatedVotes]
