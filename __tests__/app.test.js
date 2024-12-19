@@ -534,7 +534,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
-describe.only("PATCH /api/comments/:comment_id", () => {
+describe("PATCH /api/comments/:comment_id", () => {
   it("PATCH - 200, responds to requested comment with an increase in votes", () => {
     const upDateVotes = {
       inc_votes: 1,
